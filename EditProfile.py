@@ -18,7 +18,6 @@ def test1():
     driver.find_element_by_css_selector('[placeholder="Username"]').send_keys("Arnold")
     driver.find_element_by_css_selector('[placeholder="Short bio about you"]').clear()
     driver.find_element_by_css_selector('[placeholder="Short bio about you"]').send_keys("Mr.Olimpia")
-    driver.find_element_by_css_selector('[placeholder="New Password"]').send_keys("qwertyqwerty")
     driver.find_element_by_css_selector('[Type="Submit"').click()
     driver.quit()
 
