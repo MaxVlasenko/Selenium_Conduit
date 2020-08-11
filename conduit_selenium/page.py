@@ -101,8 +101,6 @@ class SettingsPage(BasePage):
     new_password_selector = '[placeholder="New Password"]'
     user_name_selector = '[placeholder="Username"]'
     submit_button_selector = '[Type="Submit"]'
-    user_name = 'Arnold Schwarz'
-    short_bio = 'Mr Olimpia'
     sign_in_selector = 'a[href = "#login"]'
     user_name_element = '.container > ul > li:nth-child(4) > a'
     faker = Faker()
@@ -118,16 +116,17 @@ class SettingsPage(BasePage):
         self.driver.find_element_by_css_selector(self.setting_selector).click()
         user_name_field = self.driver.find_element_by_css_selector(self.user_name_selector)
         user_name_field.clear()
-        user_name_field.send_keys(self.user_name)
+        faker_name = self.faker.name()
+        user_name_field.send_keys(faker_name)
         short_bio_field = self.driver.find_element_by_css_selector(self.short_bio_selector)
         short_bio_field.clear()
-        short_bio_field.send_keys(self.short_bio)
+        short_bio_field.send_keys(self.faker.text())
         password_field = self.driver.find_element_by_css_selector(self.new_password_selector)
         password_field.clear()
         self.driver.find_element_by_css_selector(self.submit_button_selector).click()
         sleep(4)
         user_name_element = self.driver.find_element_by_css_selector(self.user_name_element)
-        assert user_name_element.text == self.user_name
+        assert user_name_element.text == faker_name
 
 
 class RegistrationPage(BasePage):
