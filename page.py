@@ -1,7 +1,7 @@
-"""
-Apply Page Object pattern to this tests
-"""
-import time
+from time import sleep
+
+from selenium.webdriver.common.keys import Keys
+from selenium import webdriver
 
 class BasePage:
     def __init__(self, driver):
@@ -10,63 +10,62 @@ class BasePage:
     def open(self, path):
         self.driver.get(path)
 
-    def find_element_by_text(self, text, tag_name='span'):
-        return self.driver.find_element_by_xpath("//" + tag_name + "[contains(., " + "'" + text + "'" + ")]")
-
-
 class LoginPage(BasePage):
-    user_name_selector = '#userName'
-    password_selector = '#password'
-    login_selector = '#login'
-    user_name_value_selector = '#userName-value'
-    login_url = 'https://demoqa.com/login'
+    login_link_selector = 'a[href = \'#login\']'
+    email_field_selector = '.form-group > input[type = \'email\']'
+    login_field_selector = '.form-group > input[type = \'password\']'
+    subm_button_selector = 'button[type = \'submit\']'
 
     def login_as_registered_user(self, user_data):
-        self.open(self.login_url)
+        self.open("https://react-redux.realworld.io/#/?_k=yawtxs")
+        login_link = self.driver.find_element_by_css_selector(self.login_link_selector)
+        login_link.click()
+        email_field = self.driver.find_element_by_css_selector(self.email_field_selector);
+        email_field.send_keys(user_data['login'])
+        login_field = self.driver.find_element_by_css_selector(self.login_field_selector);
+        login_field.send_keys(user_data['password'])
+        subm_button = self.driver.find_element_by_css_selector(self.subm_button_selector);
+        subm_button.click();
 
-        user_name_field = self.driver.find_element_by_css_selector(self.user_name_selector)
-        user_name_field.send_keys(user_data['login'])
+class ArticlePage(BasePage):
+    article_title_field_selector = 'form > fieldset > fieldset:nth-child(1) > input'
+    about_article_field_selector = 'form > fieldset > fieldset:nth-child(2) > input'
+    article_field_selector = 'form > fieldset > fieldset:nth-child(3) > textarea'
+    tag_field_selector = 'form > fieldset > fieldset:nth-child(4) > input'
+    publish_article_button = 'form > fieldset > button'
+    article_title_field = 'GB'
+    about_article_field = 'about GB'
+    article_field = 'London is a capital of GB'
+    tag_field = 'London'
 
-        user_password_field = self.driver.find_element_by_css_selector(self.password_selector)
-        user_password_field.send_keys(user_data['password'])
+    def create_article(self):
+        article_title_field = self.driver.find_element_by_css_selector(
+            self.article_title_field_selector)
+        article_title_field.send_keys(self.article_title_field)
+        about_article_field = self.driver.find_element_by_css_selector(
+            self.about_article_field_selector)
+        about_article_field.send_keys(self.about_article_field)
+        article_field = self.driver.find_element_by_css_selector(
+            self.article_field_selector)
+        article_field.send_keys(self.article_field)
+        tag_field = self.driver.find_element_by_css_selector(
+            self.tag_field_selector)
+        tag_field.send_keys(self.tag_field)
+        publish_article_button = self.driver.find_element_by_css_selector(self.publish_article_button)
+        publish_article_button.click()
 
-        login_btn = self.driver.find_element_by_css_selector(self.login_selector)
-        login_btn.click()
+    def update_article(self, article_title):
+        self.article_title_field = article_title
+        article_title_field = self.driver.find_element_by_css_selector(
+            self.article_title_field_selector)
+        article_title_field.clear()
+        article_title_field.send_keys(self.article_title_field)
+        publish_article_button = self.driver.find_element_by_css_selector(self.publish_article_button)
+        publish_article_button.click()
+        sleep(4)
+        article_title_label = self.driver.find_element_by_css_selector('.banner > div > h1')
+        assert article_title == article_title_label.text
 
-        time.sleep(1)
-        assert self.driver.find_element_by_css_selector(self.user_name_value_selector).text == user_data['login']
 
 
-class BookPage(BasePage):
-    book_url = 'https://demoqa.com/books'
-    search_box_selector = '#searchBox'
-    delete_record_selector = '#delete-record-undefined'
-    close_selector = '#closeSmallModal-ok'
 
-    def add_book_to_profile(self, book_name):
-        self.open(self.book_url)
-
-        search_field = self.driver.find_element_by_css_selector(self.search_box_selector)
-        search_field.send_keys(book_name)
-
-        buy_book_link = self.find_element_by_text(book_name, 'span')
-        buy_book_link.click()
-
-        self.driver.execute_script("window.scrollTo(0, document.body.scrollHeight);")
-        add_to_collection_btn = self.find_element_by_text('Add To Your Collection', 'button')
-        add_to_collection_btn.click()
-
-        time.sleep(0.5)
-
-        alert = self.driver.switch_to.alert
-        alert.accept()
-
-    def validate_and_remove_book(self, book_name):
-        time.sleep(0.5)
-        assert book_name == self.find_element_by_text(book_name, 'a').text
-        self.driver.find_element_by_css_selector(self.delete_record_selector).click()
-        time.sleep(0.5)
-        self.driver.find_element_by_css_selector(self.close_selector).click()
-        time.sleep(0.5)
-        alert = self.driver.switch_to.alert
-        alert.accept()
