@@ -4,7 +4,10 @@ from selenium.common.exceptions import NoSuchElementException
 from faker import Faker
 from selenium import webdriver
 
+
 class BasePage:
+    faker = Faker()
+
     def __init__(self, driver):
         self.driver = driver
 
@@ -21,6 +24,11 @@ class BasePage:
 
 class TestCase(object):
     driver = None
+
+    USER = {
+        'login': 'kate198@gmail.com',
+        'password': 'amid1987'
+    }
 
     def setup_method(self):
         self.driver = webdriver.Chrome(executable_path="c:/selenium/chromedriver.exe")
@@ -58,12 +66,19 @@ class ArticlePage(BasePage):
     tag_field_selector = 'form > fieldset > fieldset:nth-child(4) > input'
     write_comment_field = 'form > div:nth-child(1) > textarea[placeholder="Write a comment..."]'
     publish_article_button = 'form > fieldset > button'
+    comment_field_selector = 'textarea[placeholder="Write a comment..."]'
+    article_title_link_selector = '.banner > div > h1'
+    new_post_link_selector = 'div[class = \'container\'] > ul > li:nth-child(2) > a'
     article_title_field = 'GB'
     about_article_field = 'about GB'
     article_field = 'London is a capital of GB'
     tag_field = 'London'
 
     def create_article(self):
+        new_post_link = self.driver.find_element_by_css_selector(
+            self.new_post_link_selector);
+        new_post_link.click()
+        sleep(4)
         article_title_field = self.driver.find_element_by_css_selector(
             self.article_title_field_selector)
         article_title_field.send_keys(self.article_title_field)
@@ -81,8 +96,8 @@ class ArticlePage(BasePage):
         sleep(4)
         assert self.check_exists_by_css_selector(self.write_comment_field)
 
-    def update_article(self, article_title):
-        self.article_title_field = article_title
+    def update_article(self):
+        self.article_title_field = self.faker.job()
         article_title_field = self.driver.find_element_by_css_selector(
             self.article_title_field_selector)
         article_title_field.clear()
@@ -90,8 +105,16 @@ class ArticlePage(BasePage):
         publish_article_button = self.driver.find_element_by_css_selector(self.publish_article_button)
         publish_article_button.click()
         sleep(4)
-        article_title_label = self.driver.find_element_by_css_selector('.banner > div > h1')
-        assert article_title == article_title_label.text
+        article_title_link = self.driver.find_element_by_css_selector(self.article_title_link_selector)
+        assert self.article_title_field == article_title_link.text
+
+    def create_comment(self):
+        write_comment_field = self.driver.find_element_by_css_selector(
+            self.comment_field_selector);
+        write_comment_field.clear()
+        write_comment_field.send_keys(self.faker.text())
+        post_comment_button = self.driver.find_element_by_css_selector('button[type = "submit"]')
+        post_comment_button.click()
 
 
 class SettingsPage(BasePage):
@@ -103,7 +126,6 @@ class SettingsPage(BasePage):
     submit_button_selector = '[Type="Submit"]'
     sign_in_selector = 'a[href = "#login"]'
     user_name_element = '.container > ul > li:nth-child(4) > a'
-    faker = Faker()
 
     def log_out(self):
         self.driver.find_element_by_css_selector(self.setting_selector).click()
@@ -136,14 +158,12 @@ class RegistrationPage(BasePage):
     password_selector = 'input[placeholder="Password"]'
     submit_button_selector = 'button[Type="Submit"]'
     setting_selector = '[href="#settings"]'
-    user_name = 'Dima1997'
     user_password = 'amid1516'
-    faker = Faker()
 
     def register_user(self):
         self.open("https://react-redux.realworld.io/#/?_k=yawtxs")
         self.driver.find_element_by_css_selector(self.sign_up_selector).click()
-        self.driver.find_element_by_css_selector(self.user_name_selector).send_keys(self.user_name)
+        self.driver.find_element_by_css_selector(self.user_name_selector).send_keys(self.faker.name())
         self.driver.find_element_by_css_selector(self.email_selector).send_keys(self.faker.safe_email())
         self.driver.find_element_by_css_selector(self.password_selector).send_keys(self.user_password)
         self.driver.find_element_by_css_selector(self.submit_button_selector).click()
