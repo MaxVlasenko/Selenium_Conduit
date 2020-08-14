@@ -1,0 +1,569 @@
+{
+	"info": {
+		"_postman_id": "86217a19-5253-4d18-a83d-882cf8c654e3",
+		"name": "conduitDeltaTeam",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+	},
+	"item": [
+		{
+			"name": "user registration ",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "3c492f8f-5254-4da7-8599-0f2b660dde8f",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test all response keys\", function(){\r",
+							"   pm.response.to.have.jsonBody('user.id')\r",
+							"       .and.to.have.jsonBody('user.email')\r",
+							"       .and.to.have.jsonBody('user.createdAt')\r",
+							"       .and.to.have.jsonBody('user.updatedAt')\r",
+							"       .and.to.have.jsonBody('user.username')\r",
+							"       .and.to.have.jsonBody('user.bio')\r",
+							"       .and.to.have.jsonBody('user.image')\r",
+							"       .and.to.have.jsonBody('user.token')\r",
+							"})\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{ \r\n  \"user\": {\r\n    \"email\": \"{{$randomEmail}}\",\r\n    \"password\": \"amid1516\",\r\n    \"username\": \"{{$randomUserName}}\"\r\n  }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/users",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"users"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "user login",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "303174ba-077f-45bd-a325-c202852e4b4e",
+						"exec": [
+							"pm.test(\"Test email data\", function() {\r",
+							"   var jsonData = pm.response.json()\r",
+							"   pm.expect(jsonData.user.email).to.eql(pm.environment.get('email'))\r",
+							"})\r",
+							"\r",
+							"pm.environment.set(\"token\", pm.response.json().user.token);\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"user\":{\r\n        \"email\": \"{{email}}\", \r\n        \"password\":  \"{{password}}\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/users/login",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"users",
+						"login"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add article",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "97682de4-6f04-4682-9927-54722a1b1e1b",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test add article\", function() {\r",
+							"   var jsonData = pm.response.json()\r",
+							"   pm.expect(jsonData.article.title).to.eql('GB')\r",
+							"   pm.expect(jsonData.article.body).to.eql('London is a capital of GB')\r",
+							"   pm.expect(jsonData.article.description).to.eql('GB')\r",
+							"   pm.expect(jsonData.article.author.username).to.eql('dima201')\r",
+							"})\r",
+							"\r",
+							"pm.environment.set(\"slug\", pm.response.json().article.slug);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"article\": {\r\n        \"title\": \"GB\",\r\n        \"description\": \"GB\",\r\n        \"body\": \"London is a capital of GB\",\r\n        \"tagList\": \"\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/articles",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"articles"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "edit article",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "60e21ac4-7572-418c-acbd-c3e293d65971",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test add article\", function() {\r",
+							"   var jsonData = pm.response.json()\r",
+							"   pm.expect(jsonData.article.title).to.eql('GB')\r",
+							"   pm.expect(jsonData.article.body).to.eql('The United Kingdom consists of four countries: England, Scotland and Northern Ireland. ')\r",
+							"   pm.expect(jsonData.article.description).to.eql('GB')\r",
+							"   pm.expect(jsonData.article.author.username).to.eql('dima201')\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "PUT",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\r\n    \"article\": {\r\n        \"body\": \"The United Kingdom consists of four countries: England, Scotland and Northern Ireland. \",\r\n        \"description\": \"GB\",\r\n        \"tagList\": [],\r\n        \"title\": \"GB\"\r\n    }\r\n}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "{{url}}/api/articles/{{slug}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"articles",
+						"{{slug}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "add comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "aed7b167-362a-4795-acba-152618182b56",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Test add article\", function() {\r",
+							"   var jsonData = pm.response.json()\r",
+							"   pm.expect(jsonData.comment.body).to.eql('hello')\r",
+							"   pm.expect(jsonData.comment.author.username).to.eql('dima201')\r",
+							"})\r",
+							"\r",
+							"pm.environment.set(\"id\", pm.response.json().comment.id);"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{token}}",
+						"type": "text"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\"comment\": {\"body\": \"hello\"}}",
+					"options": {
+						"raw": {
+							"language": "json"
+						}
+					}
+				},
+				"url": {
+					"raw": "https://conduit.productionready.io/api/articles/{{slug}}/comments",
+					"protocol": "https",
+					"host": [
+						"conduit",
+						"productionready",
+						"io"
+					],
+					"path": [
+						"api",
+						"articles",
+						"{{slug}}",
+						"comments"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete comment",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "6897cd8d-3982-4eed-a73d-5d1977100fa9",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/articles/{{slug}}/comments/{{id}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"articles",
+						"{{slug}}",
+						"comments",
+						"{{id}}"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Follow",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "7b84eae7-1d79-439a-b6de-c8294cd43ff3",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Follow\", function() {\r",
+							"   var jsonData = pm.response.json()\r",
+							"   pm.expect(jsonData.profile.username).to.eql('Jacob999')\r",
+							"   pm.expect(jsonData.profile.following).to.eql(true)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/profiles/{{name}}/follow",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"profiles",
+						"{{name}}",
+						"follow"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unfollow",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "886d8656-55a8-44bc-8575-1fca9db8358f",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Follow\", function() {\r",
+							"   var jsonData = pm.response.json()\r",
+							"   pm.expect(jsonData.profile.username).to.eql('Jacob999')\r",
+							"   pm.expect(jsonData.profile.following).to.eql(false)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/profiles/{{name}}/follow",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"profiles",
+						"{{name}}",
+						"follow"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Like",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "f5acf11e-ead4-40b1-bf4d-5ccdef41ebf7",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Follow\", function() {\r",
+							"   var jsonData = pm.response.json()\r",
+							"   pm.expect(jsonData.article.title).to.eql('GB')\r",
+							"   pm.expect(jsonData.article.favorited).to.eql(true)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/articles/{{slug}}/favorite",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"articles",
+						"{{slug}}",
+						"favorite"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "Unlike",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "204ca289-25f6-4915-859f-6b0a887cef7b",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Unlike\", function() {\r",
+							"   var jsonData = pm.response.json()\r",
+							"   pm.expect(jsonData.article.title).to.eql('GB')\r",
+							"   pm.expect(jsonData.article.favorited).to.eql(false)\r",
+							"})"
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/articles/{{slug}}/favorite",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"articles",
+						"{{slug}}",
+						"favorite"
+					]
+				}
+			},
+			"response": []
+		},
+		{
+			"name": "delete article",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"id": "2027012a-7359-4c26-8da8-f1f85b727bcc",
+						"exec": [
+							"pm.test(\"Status code is 200\", function () {\r",
+							"   pm.response.to.have.status(200);\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript"
+					}
+				}
+			],
+			"request": {
+				"method": "DELETE",
+				"header": [
+					{
+						"key": "Authorization",
+						"value": "Token {{token}}",
+						"type": "text"
+					}
+				],
+				"url": {
+					"raw": "{{url}}/api/articles/{{slug}}",
+					"host": [
+						"{{url}}"
+					],
+					"path": [
+						"api",
+						"articles",
+						"{{slug}}"
+					]
+				}
+			},
+			"response": []
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"id": "80f02040-6dec-4605-b341-c3694a7ca59a",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"id": "479ce001-55df-4f39-a387-89ab9cbd241b",
+				"type": "text/javascript",
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"protocolProfileBehavior": {}
+}
